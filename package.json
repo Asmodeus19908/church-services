@@ -10,13 +10,33 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
+    "@expo/vector-icons": "^14.1.0",
+    "@react-native-community/datetimepicker": "8.3.0",
+    "@react-native-community/masked-view": "^0.1.11",
+    "@react-native-picker/picker": "^2.11.0",
+    "@react-navigation/drawer": "^7.3.12",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.13",
     "expo": "~53.0.9",
+    "expo-linking": "^7.1.5",
     "expo-status-bar": "~2.2.3",
-    "react": "19.0.0",
-    "react-native": "0.79.2"
+    "react": "^19.0.0",
+    "react-calendar": "^5.1.0",
+    "react-dom": "^19.0.0",
+    "react-native": "0.79.2",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-reanimated": "^3.17.5",
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-screens": "^4.10.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-web": "^0.20.0",
+    "react-router-dom": "^6.14.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "gh-pages": "^6.3.0"
   },
   "private": true
 }
