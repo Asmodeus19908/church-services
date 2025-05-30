@@ -5,19 +5,40 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Platform,
-  Dimensions,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import AppHeader from '../../components/AppHeader';
 
-const screenWidth = Dimensions.get('window').width;
-
 export default function MassAttendance({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(null);
+  const today = new Date().toISOString().split('T')[0];
+
+  const massSchedules = {
+    [today]: { title: 'Special Mass (Today)', time: '8:00 am - 9:00 am' },
+    '2025-06-02': { title: 'Morning Mass', time: '09:00 am - 10:00 am' },
+    '2025-06-08': { title: 'Church Event', time: '3:00 pm - 5:00 pm' },
+  };
+
+  const markedDates = {};
+  Object.keys(massSchedules).forEach((date) => {
+    markedDates[date] = {
+      selected: true,
+      selectedColor: '#2E7D32',
+      selectedTextColor: '#ffffff',
+    };
+  });
+
+  if (selectedDate && massSchedules[selectedDate]) {
+    markedDates[selectedDate] = {
+      ...markedDates[selectedDate],
+      selected: true,
+      selectedColor: '#1B5E20', // darker when tapped
+      selectedTextColor: '#ffffff',
+    };
+  }
 
   const onAttendPress = () => {
-    alert(`✅ Attendance confirmed for ${selectedDate}`);
+    alert(`✅ Attendance confirmed for ${massSchedules[selectedDate].title} on ${selectedDate}`);
     setSelectedDate(null);
   };
 
@@ -35,49 +56,65 @@ export default function MassAttendance({ navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.centered}>
           <View style={styles.calendarCard}>
-            <Text style={styles.monthText}>Mass Attendance</Text>
+            <Text style={styles.monthText}>Mass and Events Schedule</Text>
             <Calendar
-              onDayPress={(day) => setSelectedDate(day.dateString)}
-              markedDates={{
-                [selectedDate]: {
-                  selected: true,
-                  marked: true,
-                  selectedColor: '#7bb661',
-                },
+              onDayPress={(day) => {
+                const clickedDate = day.dateString;
+                if (massSchedules[clickedDate]) {
+                  setSelectedDate(clickedDate);
+                } else {
+                  alert('📭 No schedule for this date.');
+                }
               }}
+              markedDates={markedDates}
               theme={{
-                selectedDayTextColor: '#fff',
+                calendarBackground: '#ffffff',
+                todayTextColor: '#2E7D32',
+                arrowColor: '#2E7D32',
+                textDayFontWeight: 'bold',
+                textMonthFontWeight: 'bold',
+                textDayFontSize: 18,
+                textMonthFontSize: 20,
+                textDayHeaderFontSize: 15,
+              }}
+              style={{
+                borderRadius: 16,
+                elevation: 3,
+                shadowColor: '#000',
+                shadowOpacity: 0.1,
+                shadowOffset: { width: 0, height: 2 },
+                shadowRadius: 4,
+                borderWidth: 2,
+                borderColor: '#2E7D32',
               }}
             />
           </View>
 
-          {selectedDate === null ? (
-            <>
-              <View style={styles.scheduleCard}>
-                <Text style={styles.scheduleTitle}>Mass Schedule (Sunday)</Text>
-                <Text style={styles.scheduleTime}>09:00 am - 10:00 am</Text>
-              </View>
+          {selectedDate && massSchedules[selectedDate] ? (
+            <View style={styles.attendCard}>
+              <Text style={styles.attendTitle}>{massSchedules[selectedDate].title}</Text>
+              <Text style={styles.massDay}>{selectedDate}</Text>
+              <Text style={styles.massTime}>{massSchedules[selectedDate].time}</Text>
 
-              <TouchableOpacity style={styles.backButton} onPress={onBack}>
-                <Text style={styles.backButtonText}>Back</Text>
+              <TouchableOpacity style={styles.attendButton} onPress={onAttendPress}>
+                <Text style={styles.attendButtonText}>Attend</Text>
               </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <View style={styles.attendCard}>
-                <Text style={styles.attendTitle}>Attend Mass</Text>
-                <Text style={styles.massDay}>{selectedDate}</Text>
-                <Text style={styles.massTime}>09:00 am - 10:00 am</Text>
-                <TouchableOpacity style={styles.attendButton} onPress={onAttendPress}>
-                  <Text style={styles.attendButtonText}>Attend</Text>
-                </TouchableOpacity>
-              </View>
 
               <TouchableOpacity style={styles.cancelButton} onPress={onCancelPress}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-            </>
+            </View>
+          ) : (
+            <View style={styles.scheduleCard}>
+              <Text style={styles.scheduleTitle}>
+                Tap on a <Text style={{ color: '#2E7D32', fontWeight: 'bold' }}>highlighted</Text> date to view the schedule
+              </Text>
+            </View>
           )}
+
+          <TouchableOpacity style={styles.backButton} onPress={onBack}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -104,15 +141,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 30,
-    ...Platform.select({
-      web: {
-        alignItems: 'center',
-      },
-    }),
   },
   monthText: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#000',
     marginBottom: 16,
     textAlign: 'center',
@@ -129,17 +161,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginBottom: 6,
     color: '#000',
-  },
-  scheduleTime: {
-    fontSize: 14,
-    color: '#000',
+    textAlign: 'center',
   },
   backButton: {
-    backgroundColor: '#7bb661',
+    backgroundColor: '#2E7D32',
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 24,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginBottom: 30,
     elevation: 3,
   },
@@ -154,31 +183,31 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 24,
     marginBottom: 20,
+    alignItems: 'center',
   },
   attendTitle: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 22,
     marginBottom: 10,
     color: '#000',
   },
   massDay: {
-    fontWeight: 'bold',
-    fontSize: 17,
-    marginBottom: 6,
+    fontSize: 18,
     color: '#000',
+    marginBottom: 6,
   },
   massTime: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#000',
     marginBottom: 14,
   },
   attendButton: {
-    backgroundColor: '#7bb661',
+    backgroundColor: '#2E7D32',
     paddingVertical: 12,
     paddingHorizontal: 28,
     borderRadius: 16,
-    alignSelf: 'flex-start',
     elevation: 3,
+    marginBottom: 10,
   },
   attendButtonText: {
     color: '#fff',
@@ -186,12 +215,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelButton: {
-    backgroundColor: '#7bb661',
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: 24,
-    alignSelf: 'flex-start',
-    marginBottom: 30,
+    backgroundColor: '#777',
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+    borderRadius: 16,
     elevation: 3,
   },
   cancelButtonText: {
