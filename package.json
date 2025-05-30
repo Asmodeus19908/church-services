@@ -1,13 +1,17 @@
 {
+  "homepage": "https://github.com/Asmodeus19908/church-services",
   "name": "pamukidchurchapp",
   "license": "0BSD",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build": "expo export"
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
@@ -25,6 +29,7 @@
     "react-calendar": "^5.1.0",
     "react-dom": "^19.0.0",
     "react-native": "0.79.2",
+    "react-native-calendars": "^1.1312.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "^3.17.5",
@@ -36,7 +41,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "gh-pages": "^6.3.0"
+    "gh-pages": "^6.3.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
   },
   "private": true
 }

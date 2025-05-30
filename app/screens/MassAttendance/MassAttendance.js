@@ -8,9 +8,8 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import AppHeader from '../../components/AppHeader';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -18,7 +17,7 @@ export default function MassAttendance({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const onAttendPress = () => {
-    alert(`✅ Attendance confirmed for ${selectedDate.toDateString()}`);
+    alert(`✅ Attendance confirmed for ${selectedDate}`);
     setSelectedDate(null);
   };
 
@@ -38,15 +37,17 @@ export default function MassAttendance({ navigation }) {
           <View style={styles.calendarCard}>
             <Text style={styles.monthText}>Mass Attendance</Text>
             <Calendar
-              onChange={setSelectedDate}
-              value={selectedDate}
-              calendarType="gregory"
-              tileClassName={({ date }) =>
-                selectedDate &&
-                date.toDateString() === selectedDate.toDateString()
-                  ? 'selected-day'
-                  : null
-              }
+              onDayPress={(day) => setSelectedDate(day.dateString)}
+              markedDates={{
+                [selectedDate]: {
+                  selected: true,
+                  marked: true,
+                  selectedColor: '#7bb661',
+                },
+              }}
+              theme={{
+                selectedDayTextColor: '#fff',
+              }}
             />
           </View>
 
@@ -65,7 +66,7 @@ export default function MassAttendance({ navigation }) {
             <>
               <View style={styles.attendCard}>
                 <Text style={styles.attendTitle}>Attend Mass</Text>
-                <Text style={styles.massDay}>{selectedDate.toDateString()}</Text>
+                <Text style={styles.massDay}>{selectedDate}</Text>
                 <Text style={styles.massTime}>09:00 am - 10:00 am</Text>
                 <TouchableOpacity style={styles.attendButton} onPress={onAttendPress}>
                   <Text style={styles.attendButtonText}>Attend</Text>
